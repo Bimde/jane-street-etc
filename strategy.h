@@ -13,15 +13,15 @@ enum StrategyType {
 class Strategy {
   public:
 		Strategy(
-			std::unordered_map<int, Order>,
-			std::unordered_map<Ticker, Book>,
-			std::unordered_map<Ticker, Holdings>);
+			std::unordered_map<int, Order> *,
+			std::unordered_map<Ticker, Book> *,
+			std::unordered_map<Ticker, Holdings> *);
 		std::vector<Action> runStrategy(std::vector<StrategyType>);
 	private:
 		std::unordered_map<StrategyType, StrategyInterface> strategies;
-		std::unordered_map<int, Order> idToOrder;
-		std::unordered_map<Ticker, Book> tickerToBook;
-		std::unordered_map<Ticker, Holdings> tickerToHoldings;
+		std::unordered_map<int, Order> *idToOrder;
+		std::unordered_map<Ticker, Book> *tickerToBook;
+		std::unordered_map<Ticker, Holdings> *tickerToHoldings;
 };
 
 #endif

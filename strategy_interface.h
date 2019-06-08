@@ -6,9 +6,9 @@
 #include "strategy.h"
 
 class StrategyInterface {
-  std::unordered_map<int, Order> *idToOrder,
-  std::unordered_map<Ticker, Book> *tickerToBook,
-  std::unordered_map<Ticker, Holdings> *tickerToHoldings
+    std::unordered_map<int, Order> *idToOrder;
+    std::unordered_map<Ticker, Book> *tickerToBook;
+    std::unordered_map<Ticker, Holdings> *tickerToHoldings;
 
   protected:
     StrategyInterface(
@@ -17,7 +17,7 @@ class StrategyInterface {
       std::unordered_map<Ticker, Holdings> *tickerToHoldings);
 
   public:
-    Action Strategy::run() = 0;
+    Action run() = 0;
 };
 
 #endif
