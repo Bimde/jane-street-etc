@@ -16,17 +16,19 @@ PennyPinching::PennyPinching(
 const Ticker ticker = Ticker::BOND;
 
 const int ORDER_QUANTITY = 50;
+const int BUY_PRICE = 999;
+const int SELL_PRICE = 1001;
 
 Action PennyPinching::run() {
   std::pair<Order, Order> &orders = (*tickerToOrders)[ticker];
 
   int firstDif = ORDER_QUANTITY - orders.first.amount;
   if (firstDif > 0) {
-    return Action{ActionType::BUY, firstDif};
+    return Action{ActionType::BUY, firstDif, ticker, BUY_PRICE};
   }
 
   int secondDif = ORDER_QUANTITY - orders.second.amount;
   if (secondDif > 0) {
-    return Action{ActionType::SELL, secondDif};
+    return Action{ActionType::SELL, secondDif, ticker, SELL_PRICE};
   }
 }
