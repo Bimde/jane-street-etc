@@ -9,8 +9,9 @@
 #include <string.h>
 
 #include "connection.h"
+#include "configuration.h"
 
-Connection::Connection(Configuration configuration) {
+Connection::Connection(Configuration& configuration) {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
       throw std::runtime_error("Could not create socket");
