@@ -7,7 +7,7 @@
 #include "strategy_interface.h"
 
 enum StrategyType {
-	BASIC
+	PENNY_PINCHING
 };
 
 class Strategy {
@@ -15,10 +15,11 @@ class Strategy {
 		Strategy(
 			std::unordered_map<int, Order> *,
 			std::unordered_map<Ticker, Book> *,
-			std::unordered_map<Ticker, Holdings> *);
+			std::unordered_map<Ticker, Holdings> *,
+			std::unordered_map<Ticker, std::pair<Order, Order>> *);
 		std::vector<Action> runStrategy(std::vector<StrategyType>);
 	protected:
-		std::unordered_map<StrategyType, StrategyInterface> strategies;
+		std::unordered_map<StrategyType, StrategyInterface *> strategies;
 		std::unordered_map<int, Order> *idToOrder;
 		std::unordered_map<Ticker, std::pair<Order, Order>> *tickerToOrders;
 		std::unordered_map<Ticker, Book> *tickerToBook;

@@ -15,7 +15,7 @@ PennyPinching::PennyPinching(
 
 const Ticker ticker = Ticker::BOND;
 
-const int ORDER_QUANTITY = 50;
+const int ORDER_QUANTITY = 80;
 const int BUY_PRICE = 999;
 const int SELL_PRICE = 1001;
 
@@ -31,4 +31,6 @@ Action PennyPinching::run() {
   if (secondDif > 0) {
     return Action{ActionType::SELL, secondDif, ticker, SELL_PRICE};
   }
+
+  return Action{ActionType::NO_ACTION};
 }
