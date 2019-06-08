@@ -1,3 +1,8 @@
+#ifndef STRATEGY_INTERFACE_H
+#define STRATEGY_INTERFACE_H
+
+#include <unordered_map>
+
 #include "strategy.h"
 
 class StrategyInterface {
@@ -17,3 +22,5 @@ class StrategyInterface {
       std::unordered_map<Ticker, Book>,
       std::unordered_map<Ticker, Holdings>);
 };
+
+#endif
