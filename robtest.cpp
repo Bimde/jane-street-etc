@@ -138,6 +138,26 @@ string getStringForKey(string json, string key) {
     return d[key.c_str()].GetString();
 }
 
+Hello stringToHello(string json) {
+    Hello h;
+
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+    const Value& symbs = d["symbols"];
+
+    assert(symbs.IsArray());
+    for (SizeType i = 0; i < symbs.Size(); i++) {
+        const Value& data = symbs[i];
+        string s = data["symbol"].GetString();
+        int n = data["position"].GetInt();
+        
+        std::pair<string,int> pair = std::make_pair(s, n);
+        h.symbols.emplace_back(pair);
+    }
+    return h;
+}
+
 int main(int argc, char *argv[]) {
     std::string json = R"({"type":"book","symbol":"VALBZ","buy":[[4201,9]],"sell":[[4202,5],[4203,18]]})";
     std::string jsonTrade = R"({"type":"trade","symbol":"SYM","price":101,"size":21})";
@@ -145,6 +165,7 @@ int main(int argc, char *argv[]) {
     std::string jsonError = R"({"type":"reject","order_id":69420,"error":"Wow an error1"})";
     std::string jsonFill = R"({"type":"fill","order_id":100,"symbol":"SYML","dir":"BUY","price":69,"size":1})";
     std::string jsonOut = R"({"type":"out","order_id":69420})";
+    std::string jsonHello = R"({"type":"hello","symbols":[{"symbol":"SYM","position":12}, {"symbol":"SYM1","position":13}, {"symbol":"SYM2","position":14}]})";
     Book b = stringToBook(json);  
     std::cout << "Buys" << std::endl;
     for (auto im : b.buyOrders) {
@@ -173,7 +194,12 @@ int main(int argc, char *argv[]) {
 
     std::cout << "OUT: " << stringToOut(jsonOut) << std::endl;
     
-    
     std::cout << getStringForKey(json, "symbol") << std::endl;
+
+    Hello h = stringToHello(jsonHello);
+    for (auto thing : h.symbols) {
+        std::cout << thing.first << " " << thing.second << std::endl;
+    }
+
     return 0;
 }

@@ -5,6 +5,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "connection.h"
+#include "strategy.h"
 #include "items.h"
 
 class Portfolio {
