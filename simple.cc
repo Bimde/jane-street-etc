@@ -203,6 +203,9 @@ int main(int argc, char *argv[])
         std::cout << s << std::endl;
       }
       
+      if (s.find("CLOSE") != std::string::npos) {
+        return 0;
+      }
     }
     return 0;
 }
