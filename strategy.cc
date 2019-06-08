@@ -1,7 +1,7 @@
-#include "strategy.h"
 #include <vector>
+
+#include "strategy.h"
 #include "items.h"
-#include "portfolio.h"
 #include "penny_pinching.h"
 
 Strategy::Strategy(std::unordered_map<int, Order> *idToOrder,
