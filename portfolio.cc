@@ -4,6 +4,10 @@
 #include "items.h"
 using namespace rapidjson;
 
+using std::string;
+using std::to_string;
+using namespace rapidjson;
+
 Book stringToBook(string json) {
     Book book;
 
@@ -83,4 +87,65 @@ void Portfolio::run() {
             continue;
         }
     }
+
+int stringToTrade(string json) {
+    int price;
+    int quantity;
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+
+    assert(d.HasMember("price"));
+    assert(d.HasMember("size"));
+
+    price = d["price"].GetInt();
+    quantity = d["size"].GetInt();
+
+    return price;
+}
+
+int stringToAck(string json) {
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+    assert(d.HasMember("order_id"));
+    return d["order_id"].GetInt();
+}
+
+Error stringToReject(string json) {
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+    assert(d.HasMember("order_id"));
+    assert(d.HasMember("error"));
+    Error e;
+    e.orderId = d["order_id"].GetInt();
+    e.error = d["error"].GetString();
+    return e;
+}
+
+Fill stringToFill(string json) {
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+    assert(d.HasMember("order_id"));
+    assert(d.HasMember("symbol"));
+    assert(d.HasMember("dir"));
+    assert(d.HasMember("price"));
+    assert(d.HasMember("size"));
+    Fill f;
+    f.orderId = d["order_id"].GetInt();
+    f.symbol = d["symbol"].GetString();
+    f.dir = d["dir"].GetString();
+    f.price = d["price"].GetInt();
+    f.size = d["size"].GetInt();
+    return f;
+}
+
+int stringToOut(string json) {
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+    assert(d.HasMember("order_id"));
+    return d["order_id"].GetInt();
 }

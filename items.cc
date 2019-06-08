@@ -5,8 +5,8 @@
 
 Book::Book() {}
 
-Book::Book(std::vector<std::pair<int, int>>& buy, 
-		   std::vector<std::pair<int, int>>& sell) {
+Book::Book(std::vector<std::pair<int, int> >& buy, 
+		   std::vector<std::pair<int, int> >& sell) {
 	std::swap(buyOrders, buy);
 	std::swap(sellOrders, sell);
 }
