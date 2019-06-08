@@ -2,6 +2,7 @@
 #define PORTFOLIO_H
 
 #include <vector>
+#include <string>
 #include <unordered_map>
 
 #include "items.h"
@@ -15,6 +16,7 @@ class Portfolio {
   public:
 	Portfolio(Connection);
 	void run();
+	Book stringToBook(string);
 };
 
 #endif
