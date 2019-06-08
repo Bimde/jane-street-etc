@@ -1,8 +1,11 @@
 #include <string>
+#include <iostream>
 #include "portfolio.h"
 #include "strategy.h"
 #include "rapidjson/document.h"
 #include "items.h"
+#include "connection.h"
+
 #include <map>
 #include <sstream>
 
@@ -123,6 +126,25 @@ string getStringForKey(string json, string key) {
     return d[key.c_str()].GetString();
 }
 
+Hello stringToHello(string json) {
+    Hello h;
+
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+    const Value& symbs = d["symbols"];
+
+    assert(symbs.IsArray());
+    for (SizeType i = 0; i < symbs.Size(); i++) {
+        const Value& data = symbs[i];
+        string s = data["symbol"].GetString();
+        int n = data["position"].GetInt();
+        
+        std::pair<string,int> pair = std::make_pair(s, n);
+        h.symbols.emplace_back(pair);
+    }
+    return h;
+}
 
 std::map<std::string, Ticker> stringToTickerEnum = {
                                                         {"BOND", Ticker::BOND},
@@ -132,7 +154,7 @@ std::map<std::string, Ticker> stringToTickerEnum = {
                                                         {"MS", Ticker::MS},
                                                         {"WFC", Ticker::WFC},
                                                         {"XLF", Ticker::XLF}
-                                                    }
+                                                    };
 
 std::map<std::string, Ticker> tickerToString = {
                                                         {Ticker::BOND, "BOND"},
@@ -146,7 +168,7 @@ std::map<std::string, Ticker> tickerToString = {
 
 Portfolio::Portfolio(Connection server) : server{server}, pnl{0}, strat{Strategy{idToOrder, tickerToBook, tickerToHoldings, tickerToOrders}} {}
 
-const vector<StrategyType> strats = {StrategyType::PENNY_PINCHING};
+const std::vector<StrategyType> strats = {StrategyType::PENNY_PINCHING};
 
 std::string actionToStr(Action& a, int id) {
     std::ostringstream oss;
@@ -188,7 +210,7 @@ void Portfolio::run() {
         if (marketInput.find("book") != std::string::npos) {
             string symbol = getStringForKey(marketInput, "symbol");
             Book b = stringToBook(marketInput);
-            tickerToBook[symbol] = b;
+            tickerToBook[stringToTickerEnum[symbol]] = b;
             continue;
         }
 
@@ -204,16 +226,16 @@ void Portfolio::run() {
         }
 
         if (marketInput.find("out") != std::string::npos) {
-            int stockId = stringToOut(marketInput);
-            stringToOut.erase(stockId);
+            int orderId = stringToOut(marketInput);
+            idToOrder.erase(orderId);
             continue;
         }
 
         if (marketInput.find("fill") != std::string::npos) {
             Fill fillItem = stringToFill(marketInput);
             Ticker symb = stringToTickerEnum[fillItem.symbol];
-            if (tickerToHoldings.find(symb) == tickerToHolders.end()) {
-                tickerToHoldings[symb] = Holdings(symb, 0);
+            if (tickerToHoldings.find(symb) == tickerToHoldings.end()) {
+                tickerToHoldings[symb] = Holdings{symb, 0};
             }
 
             Holdings &h = tickerToHoldings[symb];
@@ -257,7 +279,7 @@ void Portfolio::run() {
         }
 
         if (marketInput.find("error") != std::string::npos) {
-            return stringToError(marketInput);
+            std::cout << stringToError(marketInput) << std::endl;
             continue;
         }
         

@@ -55,4 +55,8 @@ struct Fill {
 	int size;
 };
 
+struct Hello {
+	std::vector<std::pair<std::string, int> > symbols;
+};
+
 #endif

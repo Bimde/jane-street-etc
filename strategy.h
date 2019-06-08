@@ -17,6 +17,7 @@ class Strategy {
 			std::unordered_map<Ticker, Book> *,
 			std::unordered_map<Ticker, Holdings> *,
 			std::unordered_map<Ticker, std::pair<Order, Order>> *);
+		~Strategy();
 		std::vector<Action> runStrategy(std::vector<StrategyType>);
 	protected:
 		std::unordered_map<StrategyType, StrategyInterface *> strategies;

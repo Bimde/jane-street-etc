@@ -12,7 +12,7 @@ class Portfolio {
 	std::unordered_map<Ticker, Book> tickerToBook;
 	std::unordered_map<Ticker, Holdings> tickerToHoldings;
 	std::unordered_map<Ticker, int> tickerToLastTradedPrice;
-    std::unordered_map<Ticker, std::pair<Order, Order>> tickerToOrders;
+  std::unordered_map<Ticker, std::pair<Order, Order>> tickerToOrders;
 	Connection server;
 	Strategy strat;
 

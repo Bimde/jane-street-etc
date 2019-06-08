@@ -4,6 +4,10 @@
 #include "items.h"
 #include "penny_pinching.h"
 
+Strategy::~Strategy() {
+  delete strategies[StrategyType::PENNY_PINCHING];
+}
+
 Strategy::Strategy(std::unordered_map<int, Order> *idToOrder,
 			std::unordered_map<Ticker, Book> *tickerToBook,
 			std::unordered_map<Ticker, Holdings> *tickerToHoldings,
@@ -20,4 +24,6 @@ std::vector<Action> Strategy::runStrategy(std::vector<StrategyType> types) {
       output.push_back(action);
     }
   }
+
+  return output;
 }
