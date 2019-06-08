@@ -24,6 +24,12 @@ struct Book {
 	std::vector<std::pair<int, int>> buyOrders;
 	std::vector<std::pair<int, int>> sellOrders;
 
+	Book();
+	Book(std::vector<std::pair<int, int>>&, 
+		 std::vector<std::pair<int, int>>&);
+	Book(const Book&);
+	Book(Book&&);
+
 	Book& operator=(const Book& b);
 	Book& operator=(Book&& b);
 };
