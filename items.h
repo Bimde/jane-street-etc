@@ -2,11 +2,10 @@
 #define ITEMS_H
 
 #include <vector>
-#include <pair>
 
 enum Ticker {BOND, VALBZ, VALE, GS, MS, WFC, XLF};
 
-enum ActionType {BUY, SELL, CONVERT_TO, CONVERT_FROM};
+enum ActionType {NO_ACTION, BUY, SELL, CONVERT_TO, CONVERT_FROM};
 
 struct Action {
 	ActionType actionType;
@@ -24,6 +23,9 @@ struct Order {
 struct Book {
 	std::vector<std::pair<int, int>> buyOrders;
 	std::vector<std::pair<int, int>> sellOrders;
+
+	Book& operator=(const Book& b);
+	Book& operator=(Book&& b);
 };
 
 struct Holdings {
