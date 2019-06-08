@@ -1,7 +1,9 @@
 #include <string>
 #include "portfolio.h"
+#include "strategy.h"
 #include "rapidjson/document.h"
 #include "items.h"
+#include <map>
 using namespace rapidjson;
 
 using std::string;
@@ -96,6 +98,13 @@ Fill stringToFill(string json) {
     return f;
 }
 
+string stringToError(string json) {
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+    return d["error"].GetString();
+}
+
 int stringToOut(string json) {
     const char *cstar = json.c_str();
     Document d;
@@ -112,32 +121,78 @@ string getStringForKey(string json, string key) {
     return d[key.c_str()].GetString();
 }
 
-Portfolio::Portfolio(Connection server) : server{server}, pnl{0} {}
+
+std::map<std::string, Ticker> stringToTickerEnum = {
+                                                        {"BOND", Ticker::BOND},
+                                                        {"VALBZ", Ticker::VALBZ},
+                                                        {"VALE", Ticker::VALE},
+                                                        {"GS", Ticker::GS},
+                                                        {"MS", Ticker::MS},
+                                                        {"WFC", Ticker::WFC},
+                                                        {"XLF", Ticker::XLF}
+                                                    }
+
+Portfolio::Portfolio(Connection server) : server{server}, pnl{0}, strat{Strategy{idToOrder, tickerToBook, tickerToHoldings, tickerToOrders}} {}
+
+const vector<StrategyType> strats = {StrategyType::PENNY_PINCHING};
 
 void Portfolio::run() {
     while (true) {
         string marketInput = server.read_from_exchange();
         if (marketInput.find("book") != std::string::npos) {
+            string symbol = getStringForKey(marketInput, "symbol");
+            Book b = stringToBook(marketInput);
+            tickerToBook[symbol] = b;
             continue;
         }
 
         if (marketInput.find("trade") != std::string::npos) {
+            // Get trade object
             continue;
         }
 
         if (marketInput.find("ack") != std::string::npos) {
+            int stockId = stringToAck(marketInput);
+            idToOrder[stockId].isAcked = true;
             continue;
         }
 
         if (marketInput.find("out") != std::string::npos) {
+            int stockId = stringToOut(marketInput);
+            stringToOut.erase(stockId);
             continue;
         }
 
         if (marketInput.find("fill") != std::string::npos) {
+            Fill fillItem = stringToFill(marketInput);
+            Ticker symb = stringToTickerEnum[fillItem.symbol];
+            if (tickerToHoldings.find(symb) == tickerToHolders.end()) {
+                tickerToHoldings[symb] = Holdings(symb, 0);
+            }
+
+            Holdings &h = tickerToHoldings[symb];
+                
+            if (fillItem.dir == "BUY") {
+                h.amount += fillItem.size;
+                tickerToOrders[symb].first.amount -= fillItem.size;
+                if (tickerToOrders[symb].first.amount < 0) {
+                    std::cout << "tickerToOrders is negative BUY!" << std::endl;
+                }
+            } else if (fillItem.dir == "SELL") {
+                h.amount -= fillItem.size;
+                tickerToOrders[symb].second.amount -= fillItem.size;
+                if (tickerToOrders[symb].second.amount < 0) {
+                    std::cout << "tickerToOrders is negative SELL!" << std::endl;
+                }
+            } else {
+                std::cout << "FILL command was not BUY or SELL, it was " << fillItem.dir << std::endl; 
+            }
             continue;
         }
 
         if (marketInput.find("reject") != std::string::npos) {
+            Error err = stringToReject(marketInput);
+            std::cout << "!!!!!!!!! " << err.orderId << " " << err.error << std::endl;
             continue;
         }
 
@@ -146,7 +201,9 @@ void Portfolio::run() {
         }
 
         if (marketInput.find("close") != std::string::npos) {
-            continue;
+            std::cout << "Close: " << marketInput << std::endl;
+            // TODO: Write for close!!!!
+            return;
         }
 
         if (marketInput.find("hello") != std::string::npos) {
@@ -154,7 +211,11 @@ void Portfolio::run() {
         }
 
         if (marketInput.find("error") != std::string::npos) {
+            return stringToError(marketInput);
             continue;
         }
+        
+        vector<Action> action = strat.runStrategy(strats);
     }
+
 }
