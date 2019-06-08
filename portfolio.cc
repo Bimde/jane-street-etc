@@ -123,6 +123,25 @@ string getStringForKey(string json, string key) {
     return d[key.c_str()].GetString();
 }
 
+Hello stringToHello(string json) {
+    Hello h;
+
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+    const Value& symbs = d["symbols"];
+
+    assert(symbs.IsArray());
+    for (SizeType i = 0; i < symbs.Size(); i++) {
+        const Value& data = symbs[i];
+        string s = data["symbol"].GetString();
+        int n = data["position"].GetInt();
+        
+        std::pair<string,int> pair = std::make_pair(s, n);
+        h.symbols.emplace_back(pair);
+    }
+    return h;
+}
 
 std::map<std::string, Ticker> stringToTickerEnum = {
                                                         {"BOND", Ticker::BOND},
