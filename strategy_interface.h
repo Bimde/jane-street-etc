@@ -17,7 +17,7 @@ class StrategyInterface {
       std::unordered_map<Ticker, Holdings> *tickerToHoldings);
 
   public:
-    Action run() = 0;
+    virtual Action run() = 0;
 };
 
 #endif
