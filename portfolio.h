@@ -4,19 +4,7 @@
 #include <vector>
 #include <unordered_map>
 
-enum Ticker {};
-
-struct Order {
-	/* data */
-};
-
-struct Book {
-
-};
-
-struct Holdings {
-
-};
+#include "items.h"
 
 class Portfolio {
 	std::unordered_map<int, Order> idToOrder;
@@ -24,6 +12,7 @@ class Portfolio {
 	std::unordered_map<Ticker, Holdings> tickerToHoldings;
 	Connection server;
 
+	friend class Strategy;
   public:
 	Portfolio(Connection);
 	void run();
