@@ -4,6 +4,8 @@
 #include "rapidjson/document.h"
 #include "items.h"
 #include <map>
+#include <sstream>
+
 using namespace rapidjson;
 
 using std::string;
@@ -132,11 +134,55 @@ std::map<std::string, Ticker> stringToTickerEnum = {
                                                         {"XLF", Ticker::XLF}
                                                     }
 
+std::map<std::string, Ticker> tickerToString = {
+                                                        {Ticker::BOND, "BOND"},
+                                                        {Ticker::VALBZ, "VALBZ"},
+                                                        {Ticker::VALE, "VALE"},
+                                                        {Ticker::GS, "GS"},
+                                                        {Ticker::MS, "MS"},
+                                                        {Ticker::WFC, "WFC"},
+                                                        {Ticker::XLF, "XLF"}
+                                                    }
+
 Portfolio::Portfolio(Connection server) : server{server}, pnl{0}, strat{Strategy{idToOrder, tickerToBook, tickerToHoldings, tickerToOrders}} {}
 
 const vector<StrategyType> strats = {StrategyType::PENNY_PINCHING};
 
+std::string actionToStr(Action& a, int id) {
+    std::ostringstream oss;
+    if (a.actionType == ActionType::BUY) {
+        oss << "{\"type\": \"add\", \"order_id\":" << to_string(id) << 
+            ", \"symbol\": \"" << tickerToString[a.ticker] << 
+            ",\"dir\":\"BUY\", \"price\":"  << to_string(a.price) <<
+            ",\"size\":" << to_string(amount);
+    }
+
+    if (a.actionType == ActionType::SELL) {
+        oss << "{\"type\": \"add\", \"order_id\":" << to_string(id) << 
+            ", \"symbol\": \"" << tickerToString[a.ticker] << 
+            ",\"dir\":\"SELL\", \"price\":"  << to_string(a.price) <<
+            ",\"size\":" << to_string(amount);
+    }
+
+    if (a.actionType == ActionType::CONVERT_TO) {
+        oss << "{\"type\": \"convert\", \"order_id\":" << to_string(id) << 
+            ", \"symbol\": \"" << tickerToString[a.ticker] << 
+            ",\"dir\":\"BUY\", \"price\":"  << to_string(a.price) <<
+            ",\"size\":" << to_string(amount);
+    }
+
+    if (a.actionType == ActionType::CONVERT_FROM) {
+        oss << "{\"type\": \"convert\", \"order_id\":" << to_string(id) << 
+            ", \"symbol\": \"" << tickerToString[a.ticker] << 
+            ",\"dir\":\"SELL\", \"price\":"  << to_string(a.price) <<
+            ",\"size\":" << to_string(amount);
+    }
+
+    return oss.str();
+}
+
 void Portfolio::run() {
+    int id = 0;
     while (true) {
         string marketInput = server.read_from_exchange();
         if (marketInput.find("book") != std::string::npos) {
@@ -215,7 +261,16 @@ void Portfolio::run() {
             continue;
         }
         
-        vector<Action> action = strat.runStrategy(strats);
+        vector<Action> actions = strat.runStrategy(strats);
+
+        for (auto& a : actions) {
+            std::string action = actionToStr(a, id);
+            if (action != "") {
+                server.send_to_exchange(action);
+            }
+            ++id;
+        }
     }
 
 }
+
