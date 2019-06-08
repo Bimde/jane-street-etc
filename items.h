@@ -2,6 +2,7 @@
 #define ITEMS_H
 
 #include <vector>
+#include <string>
 
 enum Ticker {BOND, VALBZ, VALE, GS, MS, WFC, XLF};
 
@@ -21,12 +22,12 @@ struct Order {
 };
 
 struct Book {
-	std::vector<std::pair<int, int>> buyOrders;
-	std::vector<std::pair<int, int>> sellOrders;
+	std::vector<std::pair<int, int> > buyOrders;
+	std::vector<std::pair<int, int> > sellOrders;
 
 	Book();
-	Book(std::vector<std::pair<int, int>>&, 
-		 std::vector<std::pair<int, int>>&);
+	Book(std::vector<std::pair<int, int> >&, 
+		 std::vector<std::pair<int, int> >&);
 	Book(const Book&);
 	Book(Book&&);
 
@@ -37,6 +38,19 @@ struct Book {
 struct Holdings {
 	Ticker ticker;
 	int amount;
+};
+
+struct Error {
+	int orderId;
+	std::string error;
+};
+
+struct Fill {
+	int orderId;
+	std::string symbol;
+	std::string dir;
+	int price;
+	int size;
 };
 
 #endif
