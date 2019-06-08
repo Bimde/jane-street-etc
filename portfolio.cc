@@ -87,6 +87,7 @@ void Portfolio::run() {
             continue;
         }
     }
+}
 
 int stringToTrade(string json) {
     int price;
@@ -148,4 +149,12 @@ int stringToOut(string json) {
     d.Parse(cstar);
     assert(d.HasMember("order_id"));
     return d["order_id"].GetInt();
+}
+
+string getStringForKey(string json, string key) {
+    const char *cstar = json.c_str();
+    Document d;
+    d.Parse(cstar);
+    assert(d.HasMember(key.c_str()));
+    return d[key.c_str()].GetString();
 }
