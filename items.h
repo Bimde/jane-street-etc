@@ -10,6 +10,8 @@ enum ActionType {NO_ACTION, BUY, SELL, CONVERT_TO, CONVERT_FROM};
 struct Action {
 	ActionType actionType;
 	int amount;
+	Ticker ticker;
+	int price;
 };
 
 struct Order {
