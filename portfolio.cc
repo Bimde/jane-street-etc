@@ -43,48 +43,44 @@ Portfolio::Portfolio(Connection server) : server{server}, pnl{0} {}
 void Portfolio::run() {
     while (true) {
         string marketInput = server.read_from_exchange();
-        if (marketInput.find("hello") != std::string::npos) {
-
-        }
-        
-        if (marketInput.find("ack") != std::string::npos) {
-
-        }
-
-        if (marketInput.find("reject") != std::string::npos) {
-
-        }
-
-        if (marketInput.find("error") != std::string::npos) {
-
-        }
-
-        if (marketInput.find("hello") != std::string::npos) {
-
-        }
-
-        if (marketInput.find("out") != std::string::npos) {
-
-        }
-
-        if (marketInput.find("fill") != std::string::npos) {
-
-        }
-
         if (marketInput.find("book") != std::string::npos) {
-
+            continue;
         }
 
         if (marketInput.find("trade") != std::string::npos) {
+            continue;
+        }
 
+        if (marketInput.find("ack") != std::string::npos) {
+            continue;
+        }
+
+        if (marketInput.find("out") != std::string::npos) {
+            continue;
+        }
+
+        if (marketInput.find("fill") != std::string::npos) {
+            continue;
+        }
+
+        if (marketInput.find("reject") != std::string::npos) {
+            continue;
         }
 
         if (marketInput.find("open") != std::string::npos) {
-
+            continue;
         }
 
         if (marketInput.find("close") != std::string::npos) {
+            continue;
+        }
 
+        if (marketInput.find("hello") != std::string::npos) {
+            continue;
+        }
+
+        if (marketInput.find("error") != std::string::npos) {
+            continue;
         }
     }
 }
