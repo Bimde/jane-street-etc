@@ -156,7 +156,7 @@ std::map<std::string, Ticker> stringToTickerEnum = {
                                                         {"XLF", Ticker::XLF}
                                                     };
 
-std::map<std::string, Ticker> tickerToString = {
+std::map<Ticker, std::string> tickerToString = {
                                                         {Ticker::BOND, "BOND"},
                                                         {Ticker::VALBZ, "VALBZ"},
                                                         {Ticker::VALE, "VALE"},
@@ -164,9 +164,9 @@ std::map<std::string, Ticker> tickerToString = {
                                                         {Ticker::MS, "MS"},
                                                         {Ticker::WFC, "WFC"},
                                                         {Ticker::XLF, "XLF"}
-                                                    }
+                                                    };
 
-Portfolio::Portfolio(Connection server) : server{server}, pnl{0}, strat{Strategy{idToOrder, tickerToBook, tickerToHoldings, tickerToOrders}} {}
+Portfolio::Portfolio(Connection server) : server{server}, strat{Strategy{&idToOrder, &tickerToBook, &tickerToHoldings, &tickerToOrders}} {}
 
 const std::vector<StrategyType> strats = {StrategyType::PENNY_PINCHING};
 
@@ -176,28 +176,28 @@ std::string actionToStr(Action& a, int id) {
         oss << "{\"type\": \"add\", \"order_id\":" << to_string(id) << 
             ", \"symbol\": \"" << tickerToString[a.ticker] << 
             ",\"dir\":\"BUY\", \"price\":"  << to_string(a.price) <<
-            ",\"size\":" << to_string(amount);
+            ",\"size\":" << to_string(a.amount);
     }
 
     if (a.actionType == ActionType::SELL) {
         oss << "{\"type\": \"add\", \"order_id\":" << to_string(id) << 
             ", \"symbol\": \"" << tickerToString[a.ticker] << 
             ",\"dir\":\"SELL\", \"price\":"  << to_string(a.price) <<
-            ",\"size\":" << to_string(amount);
+            ",\"size\":" << to_string(a.amount);
     }
 
     if (a.actionType == ActionType::CONVERT_TO) {
         oss << "{\"type\": \"convert\", \"order_id\":" << to_string(id) << 
             ", \"symbol\": \"" << tickerToString[a.ticker] << 
             ",\"dir\":\"BUY\", \"price\":"  << to_string(a.price) <<
-            ",\"size\":" << to_string(amount);
+            ",\"size\":" << to_string(a.amount);
     }
 
     if (a.actionType == ActionType::CONVERT_FROM) {
         oss << "{\"type\": \"convert\", \"order_id\":" << to_string(id) << 
             ", \"symbol\": \"" << tickerToString[a.ticker] << 
             ",\"dir\":\"SELL\", \"price\":"  << to_string(a.price) <<
-            ",\"size\":" << to_string(amount);
+            ",\"size\":" << to_string(a.amount);
     }
 
     return oss.str();
@@ -283,7 +283,7 @@ void Portfolio::run() {
             continue;
         }
         
-        vector<Action> actions = strat.runStrategy(strats);
+        std::vector<Action> actions = strat.runStrategy(strats);
 
         for (auto& a : actions) {
             std::string action = actionToStr(a, id);
