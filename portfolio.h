@@ -16,7 +16,6 @@ class Portfolio {
   public:
 	Portfolio(Connection);
 	void run();
-	Book stringToBook(string);
 };
 
 #endif

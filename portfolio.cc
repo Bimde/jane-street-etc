@@ -4,7 +4,7 @@
 #include "items.h"
 using namespace rapidjson;
 
-Book Portfolio::stringToBook(string json) {
+Book stringToBook(string json) {
     Book book;
 
     const char *cstar = json.c_str();
