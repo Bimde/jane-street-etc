@@ -11,8 +11,7 @@ class Portfolio {
 	std::unordered_map<Ticker, Book> tickerToBook;
 	std::unordered_map<Ticker, Holdings> tickerToHoldings;
 	Connection server;
-
-	friend class Strategy;
+	
   public:
 	Portfolio(Connection);
 	void run();
