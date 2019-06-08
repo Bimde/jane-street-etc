@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/socket.h>
+#include <sys/socket.h> 
 #include <netdb.h>
 #include <unistd.h>
 #include <netinet/in.h>
@@ -29,6 +29,7 @@
 */
 
 using std::string;
+using std::to_string;
 
 class Configuration {
 private:
@@ -37,13 +38,13 @@ private:
     1 = slower
     2 = empty
   */
-  static int const test_exchange_index = 2;
+  static int const test_exchange_index = 0;
 public:
   std::string team_name;
   std::string exchange_hostname;
   int exchange_port;
   /* replace REPLACEME with your team name! */
-  Configuration(bool test_mode) : team_name("REPLACEME"){
+  Configuration(bool test_mode) : team_name("kek"){
     exchange_port = 20000; /* Default text based port */
     if(true == test_mode) {
       exchange_hostname = "test-exch-" + team_name;
@@ -148,13 +149,13 @@ std::string join(std::string sep, std::vector<std::string> strs) {
 }
 
 bool isAck(const string& msg, int id) {
-  if join("ACK", {" ", to_string(id)}) == msg ? true : false;
+  return join("ACK", {" ", to_string(id)}) == msg ? true : false;
 }
 
 int main(int argc, char *argv[])
 {
     // Be very careful with this boolean! It switches between test and prod
-    bool test_mode = true;
+    bool test_mode = false;
     Configuration config(test_mode);
     Connection conn(config);
 
@@ -172,28 +173,34 @@ int main(int argc, char *argv[])
     
     std::cout << "The exchange replied: " << line << std::endl;
 
-    bool open = isBondOpen();
-    while (!open) {
-      open = isBondOpen();
-    }
-
     int buyid = 5;
 
-    string buyorder = join("ADD ", {to_string(id), " BOND BUY 999 10"})
+    string buyorder = join("", {"ADD ", to_string(buyid), " BOND BUY 999 50"});
   
-    send_to_exchange(buyorder);
+    std::cout << buyorder << std::endl;
+    conn.send_to_exchange(buyorder);
 
     int sellid = 6;
 
-    string sellorder = join("SELL ", {to_string(id), " BOND SELL 1001 10"})  
-    send_to_exchange(sellorder);
+    string sellorder = join("", {"ADD ", to_string(sellid), " BOND SELL 1001 50"});
+    conn.send_to_exchange(sellorder);
 
     while (true) {
-      s = read_from_exchange();
-      if (s == join("OUT ", {to_string(buyid)}) {
-        send_to_exchange(buyorder);
-      } else if (s == join("OUT ", {to_string(sellid)}) {
-        send_to_exchange(sellorder);
+      auto s = conn.read_from_exchange();
+      if (s == join("", std::vector<string>({"OUT ", to_string(buyid)}))) {
+        conn.send_to_exchange(buyorder);
+        std::cout << buyorder << std::endl;
+      } else if (s == join("", std::vector<string>({"OUT ", to_string(sellid)}))) {
+        conn.send_to_exchange(sellorder);
+        std::cout << sellorder << std::endl;
+      }
+
+      if (s.find("BOND") != std::string::npos) {
+        std::cout << s << std::endl;
+      }
+
+      if (s.find("ERROR") != std::string::npos) {
+        std::cout << s << std::endl;
       }
       
     }
