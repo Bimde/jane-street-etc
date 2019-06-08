@@ -1,3 +1,6 @@
+#ifndef CONNECTION_H
+#define CONNECTION_H
+
 /* Connection establishes a read/write connection to the exchange,
    and facilitates communication with it */
 class Connection {
@@ -14,3 +17,5 @@ class Connection {
     /** Read a line from the server, dropping the newline at the end */
     string read_from_exchange();
 };
+
+#endif
