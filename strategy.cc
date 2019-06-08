@@ -20,4 +20,6 @@ std::vector<Action> Strategy::runStrategy(std::vector<StrategyType> types) {
       output.push_back(action);
     }
   }
+
+  return output;
 }
