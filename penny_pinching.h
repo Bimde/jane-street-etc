@@ -6,11 +6,11 @@
 class PennyPinching : public StrategyInterface {
   public:
     PennyPinching(
-      std::unordered_map<int, Order> *idToOrder,
-      std::unordered_map<Ticker, Book> *tickerToBook,
-      std::unordered_map<Ticker, Holdings> *tickerToHoldings,
+      std::unordered_map<int, Order> *,
+      std::unordered_map<Ticker, Book> *,
+      std::unordered_map<Ticker, Holdings> *,
       std::unordered_map<Ticker, std::pair<Order, Order>> *);
-    virtual Action run();
+    virtual std::vector<Action> run();
 };
 
 #endif

@@ -7,7 +7,7 @@
 #include "strategy_interface.h"
 
 enum StrategyType {
-	PENNY_PINCHING
+	PENNY_PINCHING, ADR_ARBITRAGE
 };
 
 class Strategy {

@@ -19,7 +19,7 @@ class StrategyInterface {
     std::unordered_map<Ticker, std::pair<Order, Order>> *tickerToOrders;
     
   public:
-    virtual Action run() = 0;
+    virtual std::vector<Action> run() = 0;
 };
 
 #endif
